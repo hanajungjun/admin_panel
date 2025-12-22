@@ -202,7 +202,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
     try {
       await http.get(
-        Uri.parse("https://daily-push-worker.goodday-02.workers.dev/run"),
+        Uri.parse("https://daily-push-worker.kodero.workers.dev/run"),
       );
 
       _showSnack("Cloudflare 실행 요청 완료");
