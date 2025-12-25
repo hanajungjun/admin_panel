@@ -12,6 +12,8 @@ import '../widgets/image_preview.dart';
 import '../widgets/html_preview.dart';
 import 'history_page.dart';
 import 'push_log_page.dart';
+import 'admin_intro_page.dart';
+
 import '../supabase/supabase.dart';
 
 class AdminHomePage extends StatefulWidget {
@@ -375,71 +377,102 @@ class _AdminHomePageState extends State<AdminHomePage> {
           // ---------------- RIGHT: 사이드 메뉴 ----------------
           SizedBox(
             width: 260,
-            child: Container(
+            child: Material(
+              // ✅ Material 추가
               color: const Color(0xFF1B1B1B),
-              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // 로그인 버튼
-                  SizedBox(
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: isLoggedIn ? _logout : _showLoginDialog,
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
+              child: SingleChildScrollView(
+                // ✅ 스크롤 추가
+                padding: const EdgeInsets.symmetric(
+                  vertical: 24,
+                  horizontal: 16,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // 🔐 로그인 버튼
+                    SizedBox(
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: isLoggedIn ? _logout : _showLoginDialog,
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          backgroundColor: const Color(0xFF2A2A2A),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
                         ),
-                        backgroundColor: const Color(0xFF2A2A2A),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
+                        child: Text(isLoggedIn ? "로그아웃" : "로그인"),
                       ),
-                      child: Text(isLoggedIn ? "로그아웃" : "로그인"),
                     ),
-                  ),
 
-                  const SizedBox(height: 32),
-                  const Text(
-                    "🔔 알림 관리",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                    const SizedBox(height: 32),
+                    Container(height: 1, color: Colors.white24),
+                    const SizedBox(height: 32),
+
+                    const Text(
+                      "🖼 메인 관리",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
+                    const SizedBox(height: 12),
 
-                  _sideButton("테스트 발송", _sendTestPush),
-                  _sideButton("전체 발송", _sendAllPush),
-                  _sideButton("Cloudflare 실행", _runCloudflare),
-                  _sideButton("알림 로그", () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const PushLogPage()),
-                    );
-                  }),
+                    _sideButton("인트로 관리", () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AdminIntroPage(),
+                        ),
+                      );
+                    }),
 
-                  const SizedBox(height: 32),
-                  Container(height: 1, color: Colors.white24),
-                  const SizedBox(height: 32),
+                    const SizedBox(height: 32),
 
-                  const Text(
-                    "📂 히스토리",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                    const Text(
+                      "🔔 알림 관리",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
+                    const SizedBox(height: 12),
 
-                  _sideButton("히스토리 관리", () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const HistoryPage()),
-                    );
-                  }),
-                ],
+                    _sideButton("테스트 발송", _sendTestPush),
+                    _sideButton("전체 발송", _sendAllPush),
+                    _sideButton("Cloudflare 실행", _runCloudflare),
+                    _sideButton("알림 로그", () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const PushLogPage()),
+                      );
+                    }),
+
+                    const SizedBox(height: 32),
+                    Container(height: 1, color: Colors.white24),
+                    const SizedBox(height: 32),
+
+                    const Text(
+                      "📂 히스토리",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    _sideButton("히스토리 관리", () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HistoryPage()),
+                      );
+                    }),
+                  ],
+                ),
               ),
             ),
           ),
