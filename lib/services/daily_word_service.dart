@@ -26,14 +26,14 @@ class DailyWordService {
   // ============================================
   // 🔥 수정
   // ============================================
-  Future<void> updateWord(String id, Map<String, dynamic> data) async {
+  Future<void> updateWord(int id, Map<String, dynamic> data) async {
     await supabase.from('daily_words').update(data).eq('id', id);
   }
 
   // ============================================
   // 🔥 삭제
   // ============================================
-  Future<void> deleteWord(String id) async {
+  Future<void> deleteWord(int id) async {
     await supabase.from('daily_words').delete().eq('id', id);
   }
 
@@ -59,5 +59,24 @@ class DailyWordService {
         .order('updated_at', ascending: false);
 
     return List<Map<String, dynamic>>.from(res);
+  }
+
+  Future<void> updateExposureDate({
+    required int id,
+    required DateTime date,
+  }) async {
+    final formatted =
+        '${date.year}'
+        '${date.month.toString().padLeft(2, '0')}'
+        '${date.day.toString().padLeft(2, '0')}';
+
+    await supabase
+        .from('daily_words')
+        .update({
+          'date': formatted,
+          'date_timestamp': date.toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', id);
   }
 }

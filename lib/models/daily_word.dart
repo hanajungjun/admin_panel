@@ -1,56 +1,52 @@
 class DailyWord {
-  final String id; // uuid (DB 자동 생성)
+  final int id;
   final String date; // YYYYMMDD
-  final DateTime dateTimestamp;
   final String title;
   final String description;
   final String imageUrl;
   final DateTime updatedAt;
+  final DateTime dateTimestamp;
 
   DailyWord({
     required this.id,
     required this.date,
-    required this.dateTimestamp,
     required this.title,
     required this.description,
     required this.imageUrl,
     required this.updatedAt,
+    required this.dateTimestamp,
   });
 
-  /// 날짜 문자열 정규화
-  static String normalizeDate(String input) {
-    return input
-        .trim()
-        .replaceAll('\n', '')
-        .replaceAll('\r', '')
-        .replaceAll(' ', '');
+  /// 🔥 여기 추가
+  DailyWord copyWith({
+    int? id,
+    String? date,
+    String? title,
+    String? description,
+    String? imageUrl,
+    DateTime? updatedAt,
+    DateTime? dateTimestamp,
+  }) {
+    return DailyWord(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      imageUrl: imageUrl ?? this.imageUrl,
+      updatedAt: updatedAt ?? this.updatedAt,
+      dateTimestamp: dateTimestamp ?? this.dateTimestamp,
+    );
   }
 
   factory DailyWord.fromMap(Map<String, dynamic> map) {
     return DailyWord(
-      id: map['id'].toString(),
-      date: normalizeDate(map['date'] ?? ''),
-      dateTimestamp: map['date_timestamp'] != null
-          ? DateTime.parse(map['date_timestamp'])
-          : DateTime.now(),
-      title: map['title'] ?? '',
-      description: map['description'] ?? '',
-      imageUrl: map['image_url'] ?? '',
-      updatedAt: map['updated_at'] != null
-          ? DateTime.parse(map['updated_at'])
-          : DateTime.now(),
+      id: map['id'] as int,
+      date: map['date'],
+      title: map['title'],
+      description: map['description'],
+      imageUrl: map['image_url'],
+      updatedAt: DateTime.parse(map['updated_at']),
+      dateTimestamp: DateTime.parse(map['date_timestamp']),
     );
-  }
-
-  /// INSERT용 Map → id 포함 ❌
-  Map<String, dynamic> toInsertMap() {
-    return {
-      'date': normalizeDate(date),
-      'date_timestamp': dateTimestamp.toIso8601String(),
-      'title': title,
-      'description': description,
-      'image_url': imageUrl,
-      'updated_at': updatedAt.toIso8601String(),
-    };
   }
 }
