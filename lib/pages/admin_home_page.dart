@@ -10,6 +10,7 @@ import 'word_page.dart';
 import 'quiz_page.dart';
 import 'history_page.dart';
 import 'push_log_page.dart';
+import 'quiz_history_page.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -23,6 +24,19 @@ class _AdminHomePageState extends State<AdminHomePage> {
       "https://uyonjhjgmwbisocdedtw.supabase.co/functions/v1/sendPush";
 
   bool get isLoggedIn => SupabaseManager.client.auth.currentSession != null;
+
+  // ================= INIT =================
+  @override
+  void initState() {
+    super.initState();
+
+    // 🔐 앱 진입 시 로그인 안 되어 있으면 바로 로그인 팝업
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!isLoggedIn) {
+        _login();
+      }
+    });
+  }
 
   // ================= PUSH =================
   Future<void> _sendPush({required String mode, String? testToken}) async {
@@ -106,6 +120,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
     final pwCtrl = TextEditingController(text: "0000");
 
     await showDialog(
+      barrierDismissible: false, // ❗ 강제 로그인
       context: context,
       builder: (_) => AlertDialog(
         title: const Text("관리자 로그인"),
@@ -147,6 +162,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
   Future<void> _logout() async {
     await SupabaseManager.client.auth.signOut();
     setState(() {});
+    _login(); // 로그아웃하면 다시 로그인 요구
   }
 
   void _snack(String msg) {
@@ -238,7 +254,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   }),
                 ],
                 crossAxisCount: 3,
-                ratio: 4.2, // 🔽 작게
+                ratio: 4.2,
               ),
 
               const SizedBox(height: 28),
@@ -247,15 +263,23 @@ class _AdminHomePageState extends State<AdminHomePage> {
               _section("📂 히스토리"),
               _grid(
                 [
-                  _card("히스토리 관리", () {
+                  _card("단어 히스토리 관리", () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const HistoryPage()),
                     );
                   }),
+                  _card("퀴즈 히스토리 관리", () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const QuizHistoryPage(),
+                      ),
+                    );
+                  }),
                 ],
-                crossAxisCount: 3,
-                ratio: 4.2, // 🔽 작게
+                crossAxisCount: 2,
+                ratio: 4.2,
               ),
             ],
           ),
@@ -295,23 +319,29 @@ class _AdminHomePageState extends State<AdminHomePage> {
     );
   }
 
+  // 🔐 로그인 전 카드 비활성화
   Widget _card(String title, VoidCallback onTap) {
+    final enabled = isLoggedIn;
+
     return InkWell(
-      onTap: onTap,
+      onTap: enabled ? onTap : _login,
       borderRadius: BorderRadius.circular(18),
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF24242B),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: Colors.white12),
-        ),
-        child: Center(
-          child: Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
+      child: Opacity(
+        opacity: enabled ? 1.0 : 0.45,
+        child: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF24242B),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: Colors.white12),
+          ),
+          child: Center(
+            child: Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ),

@@ -1,11 +1,11 @@
 class DailyQuizModel {
-  final int? id; // DB에서 identity 쓰면 있음(없어도 됨)
-  final String date; // yyyymmdd
+  final int? id; // identity (optional)
+  final String date; // yyyyMMdd
   final String question;
   final String answer;
   final String? explanation;
-  final String? updatedAt;
-  final String? dateTimestamp;
+  final DateTime? updatedAt;
+  final DateTime? dateTimestamp;
 
   DailyQuizModel({
     this.id,
@@ -24,8 +24,12 @@ class DailyQuizModel {
       question: (json['question'] ?? '').toString(),
       answer: (json['answer'] ?? '').toString(),
       explanation: json['explanation']?.toString(),
-      updatedAt: json['updated_at']?.toString(),
-      dateTimestamp: json['date_timestamp']?.toString(),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.tryParse(json['updated_at'].toString())
+          : null,
+      dateTimestamp: json['date_timestamp'] != null
+          ? DateTime.tryParse(json['date_timestamp'].toString())
+          : null,
     );
   }
 
@@ -36,8 +40,8 @@ class DailyQuizModel {
       'question': question,
       'answer': answer,
       'explanation': explanation,
-      'updated_at': updatedAt,
-      'date_timestamp': dateTimestamp,
+      'updated_at': updatedAt?.toIso8601String(),
+      'date_timestamp': dateTimestamp?.toIso8601String(),
     };
   }
 
@@ -47,8 +51,8 @@ class DailyQuizModel {
     String? question,
     String? answer,
     String? explanation,
-    String? updatedAt,
-    String? dateTimestamp,
+    DateTime? updatedAt,
+    DateTime? dateTimestamp,
   }) {
     return DailyQuizModel(
       id: id ?? this.id,
